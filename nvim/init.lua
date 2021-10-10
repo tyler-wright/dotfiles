@@ -379,7 +379,9 @@ end
 vim.fn.sign_define('LspDiagnosticsSignError', { text = "", texthl = "LspDiagnosticsDefaultError" })
 vim.fn.sign_define('LspDiagnosticsSignWarning', { text = "", texthl = "LspDiagnosticsDefaultWarning" })
 vim.fn.sign_define('LspDiagnosticsSignInformation', { text = "", texthl = "LspDiagnosticsDefaultInformation" })
-vim.fn.sign_define('LspDiagnosticsSignHint', { text = "", texthl = "LspDiagnosticsDefaultHint" })
+vim.fn.sign_define('GitSignsAdd', { text = "", texthl = "GitGutterAdd" })
+vim.fn.sign_define('GitSignsDelete', { text = "", texthl = "GitGutterDelete" })
+vim.fn.sign_define('GitSignsChange', { text = "ﰣ", texthl = "GitGutterChange" })
 
 -- Enable Lua language server
 require 'lua-ls'
