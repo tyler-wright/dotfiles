@@ -412,7 +412,8 @@ local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
 
 -- Setup further linting here
-require('lint').linters_by_ft = {
+local lint = require('lint')
+lint.linters_by_ft = {
 	markdown = {'vale'},
 }
 
@@ -546,6 +547,9 @@ function warn_caps()
 	vim.cmd 'echohl None'
 end
 
+-- Autocommands
+-- Commands in this list are run as autocommands. For more help see
+-- help: autocommand
 vim.tbl_map(
 	function(c)
 		vim.cmd(string.format('autocmd %s', c))
@@ -554,10 +558,7 @@ vim.tbl_map(
 		'TermOpen * lua init_term()',
 		'TextYankPost * lua vim.highlight.on_yank {timeout = 200, on_visual = false}',
 		'TextYankPost * if v:event.operator is "y" | OSCYankReg + | endif',
-
+		'BufWritePost <buffer> lua require("lint").try_lint()'
 		-- 'TextYankPost * if v:event.operator is "y" && v:event.regname is "+" | OSCYankReg + | endif',
-
-		-- for some reason modifying the this line to vary from the below allows yanking to system clipboard
-		-- 'au BufWritePost <buffer> lua require('lint').try_lint()'
 	}
 )
