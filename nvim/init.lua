@@ -81,15 +81,16 @@ require('packer').startup(function()
 	use 'lukas-reineke/format.nvim'
    use 'norcalli/nvim-colorizer.lua'
    use 'hkupty/iron.nvim'
-
+   use 'ahmedkhalf/project.nvim'
 end)
 
 vim.o.inccommand = 'nosplit'
-vim.o.hlsearch = true -- Incremental live completion (note: this is now a default on master)
+vim.o.hlsearch = false -- Incremental live completion (note: this is now a default on master)
 vim.o.hidden = true -- Set highlight on search
 vim.o.mouse = 'a' -- Do not save when switching buffers (note: this is now a default on master)
 vim.o.breakindent = true -- Enable mouse mode
 vim.o.ignorecase = true -- Enable break indent
+-- vim.g.clipboard = 'clipboard-unnamedplus'
 
 local indent, width = 3, 80
 vim.opt.undofile = true
@@ -156,6 +157,7 @@ vim.api.nvim_set_keymap('t', '<ESC>', '&filetype == "fzf" ? "\\<ESC>" : "\\<C-\\
 
 -- Other shortcuts
 vim.api.nvim_set_keymap('n', '<C-l>', ':nohlsearch<CR>', {noremap = true, silent = true})
+vim.api.nvim_set_keymap('n', '-', ':NvimTreeToggle<CR>', {noremap = true, silent = true})
 
 -- Resize Windows with Keyboard Mappings
 vim.api.nvim_set_keymap('n', '<S-Down>', '<C-w>2-', {noremap = true})
@@ -261,7 +263,8 @@ require('gitsigns').setup {
 }
 
 -- Telescope
-require('telescope').setup {
+local telescope = require 'telescope'
+telescope.setup {
 	defaults = {
 		mappings = {
 			i = {
@@ -271,6 +274,7 @@ require('telescope').setup {
 		},
 	},
 }
+telescope.load_extension('projects')
 
 -- Treesitter configuration
 -- Parsers must be installed manually via :TSInstall
@@ -364,7 +368,7 @@ end
 
 -- Enable the following language servers NOTE: Does not include lua langauge
 -- server config, dealt with seperately in lua/lua-ls.lua (and required below).
-local servers = {'rust_analyzer', 'pyright', 'phpactor'}
+local servers = {'rust_analyzer', 'pyright', 'phpactor', 'tsserver'}
 for _, lsp in ipairs(servers) do
 	nvim_lsp[lsp].setup {
 		on_attach = on_attach,
@@ -379,6 +383,7 @@ end
 vim.fn.sign_define('LspDiagnosticsSignError', { text = "", texthl = "LspDiagnosticsDefaultError" })
 vim.fn.sign_define('LspDiagnosticsSignWarning', { text = "", texthl = "LspDiagnosticsDefaultWarning" })
 vim.fn.sign_define('LspDiagnosticsSignInformation', { text = "", texthl = "LspDiagnosticsDefaultInformation" })
+vim.fn.sign_define('LspDiagnosticsSignHint', { text = "", texthl = "LspDiagnosticsSignHint" })
 vim.fn.sign_define('GitSignsAdd', { text = "", texthl = "GitGutterAdd" })
 vim.fn.sign_define('GitSignsDelete', { text = "", texthl = "GitGutterDelete" })
 vim.fn.sign_define('GitSignsChange', { text = "ﰣ", texthl = "GitGutterChange" })
@@ -463,7 +468,8 @@ require 'luasnip'
 require('colorizer').setup()
 
 -- Iron (Interactive REPLS
-require('iron')
+local iron = require 'iron'
+iron.core.set_config {repl_open_cmd = 'rightbelow vertical 100 split'}
 
 -- Session Manager (Auto Session with Session Lens setup)
 require('auto-session').setup {
@@ -528,6 +534,9 @@ require('bufdel').setup {
 	-- or 'alternate'
 	quit = true,
 }
+
+-- Vim Rooter (to set root directories automatically)
+require 'project_nvim'
 
 function init_term()
 	vim.cmd 'setlocal nonumber norelativenumber'
