@@ -82,6 +82,7 @@ require('packer').startup(function()
    use 'norcalli/nvim-colorizer.lua'
    use 'hkupty/iron.nvim'
    use 'ahmedkhalf/project.nvim'
+   use 'windwp/nvim-autopairs'
 end)
 
 vim.o.inccommand = 'nosplit'
@@ -127,6 +128,11 @@ vim.opt.lazyredraw = true
 -- Disable line wrap
 vim.wo.number = true
 
+-- Set color column as a workaroudn to stop artefacts appearing on line
+-- highlight when you scroll. See more here: https://github.com/lukas-reineke/indent-blankline.nvim/issues/59
+-- NOTE: Revisit the issue periodically to check for a fix from neovim.
+vim.wo.colorcolumn = "99999"
+
 -- Make line numbers default
 vim.wo.signcolumn = 'yes'
 
@@ -158,6 +164,9 @@ vim.api.nvim_set_keymap('t', '<ESC>', '&filetype == "fzf" ? "\\<ESC>" : "\\<C-\\
 -- Other shortcuts
 vim.api.nvim_set_keymap('n', '<C-l>', ':nohlsearch<CR>', {noremap = true, silent = true})
 vim.api.nvim_set_keymap('n', '-', ':NvimTreeToggle<CR>', {noremap = true, silent = true})
+vim.api.nvim_set_keymap('n', 'crr', ':IronRestart<CR>', {noremap = true, silent = true}) -- 'crr' for c-restart-repl
+vim.api.nvim_set_keymap('n', 'cr', ':IronRepl<CR>', {noremap = true, silent = true}) -- 'cr' for create-repl
+vim.api.nvim_set_keymap('n', 'crb', '<Cmd>lua require("iron").core.send(vim.api.nvim_buf_get_option(0,"ft"), vim.api.nvim_buf_get_lines(0, 0, -1, false))<CR>', {noremap = true, silent = true}) -- 'cr' for create-repl
 
 -- Resize Windows with Keyboard Mappings
 vim.api.nvim_set_keymap('n', '<S-Down>', '<C-w>2-', {noremap = true})
@@ -469,7 +478,8 @@ require('colorizer').setup()
 
 -- Iron (Interactive REPLS
 local iron = require 'iron'
-iron.core.set_config {repl_open_cmd = 'rightbelow vertical 100 split'}
+-- iron.core.set_config {repl_open_cmd = 'rightbelow vertical 100 split'}
+iron.core.set_config {repl_open_cmd = 'vertical bo split'}
 
 -- Session Manager (Auto Session with Session Lens setup)
 require('auto-session').setup {
@@ -529,11 +539,15 @@ require 'nvim-tree'.setup {
 --     }
 -- )
 
+-- Buffer Delete
 require('bufdel').setup {
 	next = 'cycle',
 	-- or 'alternate'
 	quit = true,
 }
+
+-- autopairs
+require('nvim-autopairs').setup{}
 
 -- Vim Rooter (to set root directories automatically)
 require 'project_nvim'
