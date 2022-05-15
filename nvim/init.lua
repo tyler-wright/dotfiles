@@ -78,7 +78,7 @@ require('packer').startup(function()
 	use 'kdheepak/tabline.nvim'
 	use 'ojroques/nvim-bufdel'
 	use 'kyazdani42/nvim-tree.lua'
-	use 'lukas-reineke/format.nvim'
+	use 'lukas-reineke/lsp-format.nvim'
    use 'norcalli/nvim-colorizer.lua'
    use 'hkupty/iron.nvim'
    use 'ahmedkhalf/project.nvim'
@@ -206,7 +206,7 @@ require 'lualine'.setup {
 		lualine_a = {'mode'},
 		lualine_b = {'branch'},
 		lualine_c = {'vim.fn.getcwd()', 'filename'},
-		lualine_x = {'encoding', 'fileformat', 'filetype'},
+		lualine_x = {'encoding', 'file', 'filetype'},
 		lualine_y = {'progress'},
 		lualine_z = {'location'}
 	},
@@ -377,7 +377,7 @@ end
 
 -- Enable the following language servers NOTE: Does not include lua langauge
 -- server config, dealt with seperately in lua/lua-ls.lua (and required below).
-local servers = {'rust_analyzer', 'pyright', 'phpactor', 'tsserver'}
+local servers = {'rust_analyzer', 'pyright', 'phpactor', 'denols'}
 for _, lsp in ipairs(servers) do
 	nvim_lsp[lsp].setup {
 		on_attach = on_attach,
@@ -432,7 +432,7 @@ lint.linters_by_ft = {
 }
 
 -- Auto formatting
-require "format".setup {
+require "lsp-format".setup {
 	["*"] = {{cmd = {"sed -i 's/[ \t]*$//'"}}},
 	vim = {
 		{
@@ -469,6 +469,8 @@ require "format".setup {
 		}
 	}
 }
+
+require "lspconfig".gopls.setup { on_attach = require "lsp-format".on_attach }
 
 -- luasnip setup
 require 'luasnip'
